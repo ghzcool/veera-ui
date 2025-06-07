@@ -31,7 +31,7 @@ export default {
 const Template = ({ variant, size, disabled, iconOnly, fullWidth, label }) => {
   const element = document.createElement('div');
   element.innerHTML = `
-    <v-button click="alert" variant="${variant ?? 'primary'}"${size ? ' size="' + size + '"' : ''}"${disabled ? ' disabled="true"' : ''} ${iconOnly ? 'icon-only="true"' : ''} ${fullWidth ? 'full-width="true"' : ''}>${label}</v-button>
+    <v-button variant="${variant ?? 'primary'}"${size ? ' size="' + size + '"' : ''}${disabled ? ' disabled="true"' : ''}${iconOnly ? ' icon-only="true"' : ''}${fullWidth ? ' full-width="true"' : ''}>${label}</v-button>
   `;
   return element.querySelector('v-button');
 };
