@@ -14,7 +14,7 @@
     "build-storybook": "storybook build",
     "build": "vite build"
   },
-  "keywords": [],
+  "keywords": ["veera", "webcomponents", "ui", "library", "web", "components", "styles", "storybook"],
   "author": "Pavel Pirogov",
   "license": "MIT",
   "description": "WebComponents UI library using veera styles",
