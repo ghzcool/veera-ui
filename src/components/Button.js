@@ -24,8 +24,6 @@ export class VeeraButton extends HTMLElement {
 
     this.buttonElement = this.querySelector('.v-button');
     this.buttonElement.append(...childNodes);
-
-    this.buttonElement.addEventListener('click', (event) => this.handleClick(event));
   }
 
   connectedCallback() {
@@ -67,10 +65,6 @@ export class VeeraButton extends HTMLElement {
     } else if (name === 'disabled') {
       this.buttonElement.disabled = this.disabled;
     }
-  }
-
-  handleClick(event) {
-    this.click && !this.disabled && this.click(event);
   }
 }
 

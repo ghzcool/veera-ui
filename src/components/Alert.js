@@ -19,7 +19,7 @@ export class VeeraAlert extends HTMLElement {
     this.global = false;
     this.floating = false;
     this.variant = 'info';
-    this.title = 'Teade';
+    this.titleText = 'Teade';
     this.buttonAriaLabel = 'Sulge teade';
   }
 
@@ -29,7 +29,7 @@ export class VeeraAlert extends HTMLElement {
       <button class="v-close-button" aria-label="${this.buttonAriaLabel}" style="${this.closable ? '' : 'display: none;'}"></button>
       <div class="v-alert__header" style="${this.headerless ? 'display: none;' : ''}">
         <span class="material-icons" aria-hidden="true" style="${this.hasIcon ? '' : 'display: none;'}">${variantIcons[this.variant]}</span>
-        <h5 class="v-alert__title">${this.title}</h5>
+        <h5 class="v-alert__title">${this.titleText}</h5>
       </div>
       <div class="v-alert__body"></div>
     </div>
@@ -73,7 +73,7 @@ export class VeeraAlert extends HTMLElement {
     if (name === 'variant') {
       this.variant = newValue;
     } else if (name === 'title') {
-      this.title = newValue;
+      this.titleText = newValue;
     } else if (name === 'button-aria-label') {
       this.buttonAriaLabel = newValue;
     } else if (name === 'closable') {
@@ -94,7 +94,7 @@ export class VeeraAlert extends HTMLElement {
       this.alertElement.className = `v-alert v-alert--${this.variant}`;
       this.iconElement.textContent = variantIcons[this.variant];
     } else if (name === 'title') {
-      this.titleElement.textContent = this.title;
+      this.titleElement.textContent = this.titleText;
     } else if (name === 'button-aria-label') {
       this.closeButton.setAttribute('aria-label', this.buttonAriaLabel);
     } else if (name === 'closable') {
