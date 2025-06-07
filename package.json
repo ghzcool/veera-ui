@@ -15,9 +15,9 @@
     "build": "vite build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "Pavel Pirogov",
+  "license": "MIT",
+  "description": "WebComponents UI library using veera styles",
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.0",
     "@storybook/addon-a11y": "^9.0.4",
