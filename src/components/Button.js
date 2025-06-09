@@ -51,11 +51,11 @@ export class VeeraButton extends HTMLElement {
     } else if (name === 'size') {
       this.size = newValue;
     } else if (name === 'disabled') {
-      this.disabled = newValue === 'true';
+      this.disabled = newValue === 'true' || newValue === '';
     } else if (name === 'icon-only') {
-      this.iconOnly = newValue === 'true';
+      this.iconOnly = newValue === 'true' || newValue === '';
     } else if (name === 'full-width') {
-      this.fullWidth = newValue === 'true';
+      this.fullWidth = newValue === 'true' || newValue === '';
     }
 
     if (!this.buttonElement) return;

@@ -77,15 +77,15 @@ export class VeeraAlert extends HTMLElement {
     } else if (name === 'button-aria-label') {
       this.buttonAriaLabel = newValue;
     } else if (name === 'closable') {
-      this.closable = newValue === 'true';
+      this.closable = newValue === 'true' || newValue === '';
     } else if (name === 'headerless') {
-      this.headerless = newValue === 'true';
+      this.headerless = newValue === 'true' || newValue === '';
     } else if (name === 'has-icon') {
-      this.hasIcon = newValue === 'true';
+      this.hasIcon = newValue === 'true' || newValue === '';
     } else if (name === 'global') {
-      this.global = newValue === 'true';
+      this.global = newValue === 'true' || newValue === '';
     } else if (name === 'floating') {
-      this.floating = newValue === 'true';
+      this.floating = newValue === 'true' || newValue === '';
     }
 
     if (!this.alertElement) return;

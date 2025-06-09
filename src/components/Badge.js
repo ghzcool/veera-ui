@@ -57,7 +57,7 @@ class Badge extends HTMLElement {
         if (name === 'variant') {
             this.variant = newValue;
         } else if (name === 'has-icon') {
-            this.hasIcon = newValue === 'true';
+            this.hasIcon = newValue === 'true' || newValue === '';
         }
 
         if (!this.badgeElement) return;
