@@ -1,12 +1,13 @@
 {
   "name": "veera-ui",
   "private": false,
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist/veera-ui.js",
   "exports": "./dist/veera-ui.js",
   "files": [
     "dist",
     "src",
+    "assets",
     "README.md"
   ],
   "scripts": {
