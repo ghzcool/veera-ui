@@ -1,5 +1,8 @@
 {
-  "name": "veera-ui-worker",
+  "name": "veera-ui",
   "main": "./server.js",
-  "compatibility_date": "2022-07-12"
+  "compatibility_date": "2022-07-12",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
 }
