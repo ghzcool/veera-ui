@@ -1,9 +1,9 @@
 const variantIcons = {
-      info: 'info_outline',
-      warning: 'warning_amber',
-      error: 'error_outline',
-      success: 'check_circle_outline'
-    };
+  info: 'info_outline',
+  warning: 'warning_amber',
+  error: 'error_outline',
+  success: 'check_circle_outline'
+};
 
 export class VeeraAlert extends HTMLElement {
 
@@ -36,11 +36,11 @@ export class VeeraAlert extends HTMLElement {
     `;
 
     this.alertElement = this.querySelector('.v-alert');
-    this.iconElement = this.querySelector('.material-icons');
-    this.titleElement = this.querySelector('.v-alert__title');
-    this.closeButton = this.querySelector('.v-close-button');
-    this.headerElement = this.querySelector('.v-alert__header');
-    this.bodyElement = this.querySelector('.v-alert__body');
+    this.closeButton = this.querySelector('.v-alert > .v-close-button');
+    this.headerElement = this.querySelector('.v-alert > .v-alert__header');
+    this.iconElement = this.querySelector('.v-alert > .v-alert__header > .material-icons');
+    this.titleElement = this.querySelector('.v-alert > .v-alert__header > .v-alert__title');
+    this.bodyElement = this.querySelector('.v-alert > .v-alert__body');
 
     this.bodyElement.append(...childNodes);
 

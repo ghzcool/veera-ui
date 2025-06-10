@@ -43,9 +43,9 @@ class Accordion extends HTMLElement {
         </div>
         `;
         this.accordionElement = this.querySelector('.v-accordion');
-        this.headerElement = this.querySelector('.v-accordion__header');
-        this.titleElement = this.querySelector('.v-accordion__title');
-        this.contentElement = this.querySelector('.v-accordion__content');
+        this.headerElement = this.querySelector('.v-accordion > .v-accordion__header');
+        this.titleElement = this.querySelector('.v-accordion > .v-accordion__header > .v-accordion__title');
+        this.contentElement = this.querySelector('.v-accordion > .v-accordion__collapse > .v-accordion__content');
         this.contentElement.append(...childNodes);
 
         this.headerElement.addEventListener('click', () => this.handleToggle());

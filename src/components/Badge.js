@@ -29,8 +29,8 @@ class Badge extends HTMLElement {
         `;
 
         this.badgeElement = this.querySelector('.v-badge');
-        this.iconElement = this.querySelector('.v-badge__icon');
-        this.contentElement = this.querySelector('span:last-child');
+        this.iconElement = this.querySelector('.v-badge > .v-badge__icon');
+        this.contentElement = this.querySelector('.v-badge > span:last-child');
         this.contentElement.append(...childNodes);
     }
 
