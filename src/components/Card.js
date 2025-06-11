@@ -19,6 +19,8 @@ export class VeeraCard extends HTMLElement {
   }
 
   connectedCallback() {
+    if (this.mutationObserver) return;
+    
     this.render([...this.childNodes]);
     this.mutationObserver = new MutationObserver((list, observer) => {
       if (list.some(item => item.target === this)) {
@@ -31,7 +33,10 @@ export class VeeraCard extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.mutationObserver.disconnect();
+    if (this.mutationObserver) {
+        this.mutationObserver.disconnect();
+        this.mutationObserver = null;
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

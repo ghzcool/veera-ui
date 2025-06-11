@@ -18,6 +18,8 @@ export class List extends HTMLElement {
     }
 
     connectedCallback() {
+        if (this.mutationObserver) return;
+    
         this.render([...this.childNodes]);
         this.mutationObserver = new MutationObserver((mutations, observer) => {
             if (mutations.some(m => m.target === this)) {
@@ -30,7 +32,10 @@ export class List extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.mutationObserver.disconnect();
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+            this.mutationObserver = null;
+        }
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

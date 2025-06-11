@@ -31,7 +31,6 @@ export default {
 
 const Template = ({ disabled, size, title, content, iconAlign, expanded }) => {
     const element = document.createElement('div');
-    console.log(title);
     element.innerHTML = `
     <v-accordion${disabled ? ' disabled="true"' : ''}${iconAlign === 'left' ? ' icon-align="left"' : ''}${expanded ? ' expanded="true"' : ''} size="${size}" title="${title}">
       ${content}

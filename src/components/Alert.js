@@ -48,6 +48,8 @@ export class VeeraAlert extends HTMLElement {
   }
 
   connectedCallback() {
+    if (this.mutationObserver) return;
+    
     this.render([...this.childNodes]);
 
     this.mutationObserver = new MutationObserver((list, observer) => {
@@ -61,7 +63,10 @@ export class VeeraAlert extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.mutationObserver.disconnect();
+    if (this.mutationObserver) {
+        this.mutationObserver.disconnect();
+        this.mutationObserver = null;
+    }
     if (this.closeButton) {
       this.closeButton.removeEventListener('click', () => this.handleClose());
     }
