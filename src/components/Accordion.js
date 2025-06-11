@@ -29,11 +29,11 @@ export class VeeraAccordion extends LitElement {
     for (const sheet of Array.from(document.styleSheets)) {
       try {
         for (const rule of Array.from(sheet.cssRules || [])) {
-          let css = rule.cssText || '';
-          if (css?.includes('forced-color-adjust: unset;')) {
-            css = css.replace(/[\w-]+:\s*unset;/g, '').trim();
-          }
           if (rule.selectorText?.includes('.v-accordion') || rule.selectorText?.includes('.material-icons')) {
+            let css = rule.cssText || '';
+            if (css?.includes('forced-color-adjust: unset;')) {
+                css = css.replace(/[\w-]+:\s*unset;/g, '').trim();
+            }
             cssText += css + '\n';
           }
         }
