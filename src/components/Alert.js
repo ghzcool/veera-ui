@@ -1,3 +1,5 @@
+import { LitElement, html } from 'lit';
+
 const variantIcons = {
   info: 'info_outline',
   warning: 'warning_amber',
@@ -5,11 +7,17 @@ const variantIcons = {
   success: 'check_circle_outline'
 };
 
-export class VeeraAlert extends HTMLElement {
-
-  static get observedAttributes() {
-    return ['closable', 'headerless', 'variant', 'has-icon', 'global', 'floating', 'title', 'button-aria-label'];
-  }
+export class VeeraAlert extends LitElement {
+  static properties = {
+    closable: { type: Boolean, reflect: true },
+    headerless: { type: Boolean, reflect: true },
+    variant: { type: String, reflect: true },
+    hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
+    global: { type: Boolean, reflect: true },
+    floating: { type: Boolean, reflect: true },
+    title: { type: String, reflect: true },
+    buttonAriaLabel: { type: String, attribute: 'button-aria-label', reflect: true }
+  };
 
   constructor() {
     super();
@@ -19,105 +27,58 @@ export class VeeraAlert extends HTMLElement {
     this.global = false;
     this.floating = false;
     this.variant = 'info';
-    this.titleText = 'Teade';
+    this.title = 'Teade';
     this.buttonAriaLabel = 'Sulge teade';
+    this._closed = false;
   }
 
-  render(childNodes) {
-    this.innerHTML = `
-    <div class="v-alert v-alert--${this.variant}${this.global ? ' v-alert--global' : ''}${this.floating ? ' v-alert--floating' : ''}">
-      <button class="v-close-button" aria-label="${this.buttonAriaLabel}" style="${this.closable ? '' : 'display: none;'}"></button>
-      <div class="v-alert__header" style="${this.headerless ? 'display: none;' : ''}">
-        <span class="material-icons" aria-hidden="true" style="${this.hasIcon ? '' : 'display: none;'}">${variantIcons[this.variant]}</span>
-        <h5 class="v-alert__title">${this.titleText}</h5>
-      </div>
-      <div class="v-alert__body"></div>
-    </div>
-    `;
-
-    this.alertElement = this.querySelector('.v-alert');
-    this.closeButton = this.querySelector('.v-alert > .v-close-button');
-    this.headerElement = this.querySelector('.v-alert > .v-alert__header');
-    this.iconElement = this.querySelector('.v-alert > .v-alert__header > .material-icons');
-    this.titleElement = this.querySelector('.v-alert > .v-alert__header > .v-alert__title');
-    this.bodyElement = this.querySelector('.v-alert > .v-alert__body');
-
-    this.bodyElement.append(...childNodes);
-
-    this.closeButton.addEventListener('click', () => this.handleClose());
-  }
-
-  connectedCallback() {
-    if (this.mutationObserver) return;
-    
-    this.render([...this.childNodes]);
-
-    this.mutationObserver = new MutationObserver((list, observer) => {
-      if (list.some(item => item.target === this)) {
-        observer.disconnect();
-        this.render([...list[0].addedNodes]);
-        observer.observe(this, { childList: true, subtree: false });
+  firstUpdated() {
+    const style = document.createElement('style');
+    let cssText = '';
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        for (const rule of Array.from(sheet.cssRules || [])) {
+          if (
+            rule.selectorText &&
+            (rule.selectorText.includes('.v-alert') ||
+              rule.selectorText.includes('.v-close-button') ||
+              rule.selectorText.includes('.material-icons'))
+          ) {
+            cssText += rule.cssText + '\n';
+          }
+        }
+      } catch (e) {
+        console.error(e);
       }
-    });
-    this.mutationObserver.observe(this, { childList: true, subtree: false });
-  }
-
-  disconnectedCallback() {
-    if (this.mutationObserver) {
-        this.mutationObserver.disconnect();
-        this.mutationObserver = null;
     }
-    if (this.closeButton) {
-      this.closeButton.removeEventListener('click', () => this.handleClose());
-    }
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) return;
-
-    if (name === 'variant') {
-      this.variant = newValue;
-    } else if (name === 'title') {
-      this.titleText = newValue;
-    } else if (name === 'button-aria-label') {
-      this.buttonAriaLabel = newValue;
-    } else if (name === 'closable') {
-      this.closable = newValue === 'true' || newValue === '';
-    } else if (name === 'headerless') {
-      this.headerless = newValue === 'true' || newValue === '';
-    } else if (name === 'has-icon') {
-      this.hasIcon = newValue === 'true' || newValue === '';
-    } else if (name === 'global') {
-      this.global = newValue === 'true' || newValue === '';
-    } else if (name === 'floating') {
-      this.floating = newValue === 'true' || newValue === '';
-    }
-
-    if (!this.alertElement) return;
-
-    if (name === 'variant') {
-      this.alertElement.className = `v-alert v-alert--${this.variant}`;
-      this.iconElement.textContent = variantIcons[this.variant];
-    } else if (name === 'title') {
-      this.titleElement.textContent = this.titleText;
-    } else if (name === 'button-aria-label') {
-      this.closeButton.setAttribute('aria-label', this.buttonAriaLabel);
-    } else if (name === 'closable') {
-      this.closeButton.style.display = this.closable ? 'block' : 'none';
-    } else if (name === 'headerless') {
-      this.headerElement.style.display = this.headerless ? 'none' : '';
-    } else if (name === 'has-icon') {
-      this.iconElement.style.display = this.hasIcon ? '' : 'none';
-    } else if (name === 'global') {
-      this.alertElement.classList.toggle('v-alert--global', this.global);
-    } else if (name === 'floating') {
-      this.alertElement.classList.toggle('v-alert--floating', this.floating);
-    }
+    style.textContent = cssText;
+    this.shadowRoot.prepend(style);
   }
 
   handleClose() {
-    this.mutationObserver.disconnect();
-    this.innerHTML = '';
+    this._closed = true;
+    this.requestUpdate();
+  }
+
+  render() {
+    if( this._closed ) {
+      return html``;
+    }
+    return html`
+      <div class="v-alert v-alert--${this.variant}${this.global ? ' v-alert--global' : ''}${this.floating ? ' v-alert--floating' : ''}">
+        <button
+          class="v-close-button"
+          aria-label="${this.buttonAriaLabel}"
+          style="${this.closable ? '' : 'display: none;'}"
+          @click="${this.handleClose}"
+        ></button>
+        <div class="v-alert__header" style="${this.headerless ? 'display: none;' : ''}">
+          <span class="material-icons" aria-hidden="true" style="${this.hasIcon ? '' : 'display: none;'}">${variantIcons[this.variant]}</span>
+          <h5 class="v-alert__title">${this.title}</h5>
+        </div>
+        <div class="v-alert__body"><slot></slot></div>
+      </div>
+    `;
   }
 }
 

@@ -1,8 +1,13 @@
-export class VeeraButton extends HTMLElement {
+import { LitElement, html } from 'lit';
 
-  static get observedAttributes() {
-    return ['variant', 'size', 'disabled', 'icon-only', 'full-width', 'click'];
-  }
+export class VeeraButton extends LitElement {
+  static properties = {
+    variant: { type: String, reflect: true },
+    size: { type: String, reflect: true },
+    disabled: { type: Boolean, reflect: true },
+    iconOnly: { type: Boolean, attribute: 'icon-only', reflect: true },
+    fullWidth: { type: Boolean, attribute: 'full-width', reflect: true }
+  };
 
   constructor() {
     super();
@@ -17,59 +22,34 @@ export class VeeraButton extends HTMLElement {
     return `v-button v-button--${this.variant} v-button--${this.size}${this.iconOnly ? ' v-button--icon-only material-icons' : ''}${this.fullWidth ? ' v-button--full-width' : ''}`;
   }
 
-  render(childNodes) {
-    this.innerHTML = `
-        <button type="button" class="${this.getClassName()}" ${this.disabled ? 'disabled="true"' : ''}></button>
-    `;
-
-    this.buttonElement = this.querySelector('.v-button');
-    this.buttonElement.append(...childNodes);
-  }
-
-  connectedCallback() {
-    if (this.mutationObserver) return;
-        
-    this.render([...this.childNodes]);
-
-    this.mutationObserver = new MutationObserver((list, observer) => {
-      if (list.some(item => item.target === this)) {
-        observer.disconnect();
-        this.render([...list[0].addedNodes]);
-        observer.observe(this, { childList: true, subtree: false });
+  firstUpdated() {
+    const style = document.createElement('style');
+    let cssText = '';
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        for (const rule of Array.from(sheet.cssRules || [])) {
+          if (rule.selectorText && rule.selectorText.includes('.v-button')) {
+            cssText += rule.cssText + '\n';
+          }
+        }
+      } catch (e) {
+        console.error(e);
       }
-    });
-    this.mutationObserver.observe(this, { childList: true, subtree: false });
+    }
+    style.textContent = cssText;
+    this.shadowRoot.prepend(style);
   }
 
-  disconnectedCallback() {
-    if (this.mutationObserver) {
-      this.mutationObserver.disconnect();
-      this.mutationObserver = null;
-    }
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) return;
-
-    if (name === 'variant') {
-      this.variant = newValue;
-    } else if (name === 'size') {
-      this.size = newValue;
-    } else if (name === 'disabled') {
-      this.disabled = newValue === 'true' || newValue === '';
-    } else if (name === 'icon-only') {
-      this.iconOnly = newValue === 'true' || newValue === '';
-    } else if (name === 'full-width') {
-      this.fullWidth = newValue === 'true' || newValue === '';
-    }
-
-    if (!this.buttonElement) return;
-
-    if (name === 'variant' || name === 'size' || name === 'icon-only' || name === 'full-width') {
-      this.buttonElement.className = this.getClassName();
-    } else if (name === 'disabled') {
-      this.buttonElement.disabled = this.disabled;
-    }
+  render() {
+    return html`
+      <button
+        type="button"
+        class="${this.getClassName()}"
+        ?disabled="${this.disabled}"
+      >
+        <slot></slot>
+      </button>
+    `;
   }
 }
 

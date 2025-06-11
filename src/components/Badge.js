@@ -1,80 +1,61 @@
-class Badge extends HTMLElement {
-    static get observedAttributes() {
-        return ['variant', 'has-icon'];
-    }
+import { LitElement, html } from 'lit';
 
-    constructor() {
-        super();
-        this.variant = 'info';
-        this.hasIcon = false;
-    }
+export class VeeraBadge extends LitElement {
+  static properties = {
+    variant: { type: String, reflect: true },
+    hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true }
+  };
 
-    static get variantIcons() {
-        return {
-            info: 'flag',
-            success: 'check',
-            warning: 'warning_amber',
-            error: 'report',
-            neutral: 'label',
-        };
-    }
+  static get variantIcons() {
+    return {
+      info: 'flag',
+      success: 'check',
+      warning: 'warning_amber',
+      error: 'report',
+      neutral: 'label',
+    };
+  }
 
-    render(childNodes) {
-        const icon = Badge.variantIcons[this.variant] || 'flag';
-        this.innerHTML = `
-            <div class="v-badge v-badge--${this.variant}">
-                <span class="material-icons v-badge__icon" style="display: ${this.hasIcon ? 'block' : 'none'}" aria-hidden="true">${icon}</span>
-                <span></span>
-            </div>
-        `;
+  constructor() {
+    super();
+    this.variant = 'info';
+    this.hasIcon = false;
+  }
 
-        this.badgeElement = this.querySelector('.v-badge');
-        this.iconElement = this.querySelector('.v-badge > .v-badge__icon');
-        this.contentElement = this.querySelector('.v-badge > span:last-child');
-        this.contentElement.append(...childNodes);
-    }
-
-    connectedCallback() {
-    if (this.mutationObserver) return;
-    
-        this.render([...this.childNodes]);
-
-        this.mutationObserver = new MutationObserver((list, observer) => {
-            if (list.some(item => item.target === this)) {
-                observer.disconnect();
-                this.render([...list[0].addedNodes]);
-                observer.observe(this, { childList: true, subtree: false });
-            }
-        });
-        this.mutationObserver.observe(this, { childList: true, subtree: false });
-    }
-
-    disconnectedCallback() {
-        if (this.mutationObserver) {
-            this.mutationObserver.disconnect();
-            this.mutationObserver = null;
+  firstUpdated() {
+    const style = document.createElement('style');
+    let cssText = '';
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        for (const rule of Array.from(sheet.cssRules || [])) {
+          if (
+            rule.selectorText &&
+            (rule.selectorText.includes('.v-badge') || rule.selectorText.includes('.material-icons'))
+          ) {
+            cssText += rule.cssText + '\n';
+          }
         }
+      } catch (e) {
+        console.error(e);
+      }
     }
+    style.textContent = cssText;
+    this.shadowRoot.prepend(style);
+  }
 
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue === newValue) return;
-
-        if (name === 'variant') {
-            this.variant = newValue;
-        } else if (name === 'has-icon') {
-            this.hasIcon = newValue === 'true' || newValue === '';
-        }
-
-        if (!this.badgeElement) return;
-
-        if (name === 'variant') {
-            this.badgeElement.className = `v-badge v-badge--${this.variant}`;
-            const icon = Badge.variantIcons[this.variant] || 'flag';
-            this.iconElement.textContent = icon;
-        } else if (name === 'has-icon') {
-            this.iconElement.style.display = this.hasIcon ? 'block' : 'none';
-        }
-    }
+  render() {
+    const icon = VeeraBadge.variantIcons[this.variant] || 'flag';
+    return html`
+      <div class="v-badge v-badge--${this.variant}">
+        <span
+          class="material-icons v-badge__icon"
+          style="display: ${this.hasIcon ? 'block' : 'none'}"
+          aria-hidden="true"
+        >${icon}</span>
+        <span><slot></slot></span>
+      </div>
+    `;
+  }
 }
 
-customElements.define('v-badge', Badge);
+customElements.define('v-badge', VeeraBadge);

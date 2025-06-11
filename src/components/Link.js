@@ -1,7 +1,14 @@
-export class VeeraLink extends HTMLElement {
-  static get observedAttributes() {
-    return ['size', 'has-icon', 'href', 'icon', 'icon-aria-label', 'target'];
-  }
+import { LitElement, html } from 'lit';
+
+export class VeeraLink extends LitElement {
+  static properties = {
+    size: { type: String, reflect: true },
+    hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
+    href: { type: String, reflect: true },
+    icon: { type: String, reflect: true },
+    iconAriaLabel: { type: String, attribute: 'icon-aria-label', reflect: true },
+    target: { type: String, reflect: true }
+  };
 
   constructor() {
     super();
@@ -13,80 +20,44 @@ export class VeeraLink extends HTMLElement {
     this.target = '';
   }
 
-  render(childNodes) {
-    this.innerHTML = `
-      <a class="v-link v-link--${this.size}${this.hasIcon ? ' v-link--with-icon' : ''}" href="${this.href}"${this.target ? ' target="' + this.target + '"' : ''}>
-        <span class="v-link__label"></span>
-        <span class="material-icons" aria-label="${this.iconAriaLabel}" style="${this.hasIcon ? '' : 'display: none'}">${this.icon}</span>
+  getClassName() {
+    return `v-link v-link--${this.size}${this.hasIcon ? ' v-link--with-icon' : ''}`;
+  }
+
+  firstUpdated() {
+    const style = document.createElement('style');
+    let cssText = '';
+    for (const sheet of Array.from(document.styleSheets)) {
+      try {
+        for (const rule of Array.from(sheet.cssRules || [])) {
+          if (rule.selectorText?.includes('.v-link') || rule.selectorText?.includes('.material-icons')) {
+            cssText += rule.cssText + '\n';
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    style.textContent = cssText;
+    this.shadowRoot.prepend(style);
+  }
+
+  render() {
+    return html`
+      <a
+        class="${this.getClassName()}"
+        href="${this.href}"
+        ?target="${this.target}"
+        target="${this.target || undefined}"
+      >
+        <slot></slot>
+        <span
+          class="material-icons"
+          aria-label="${this.iconAriaLabel}"
+          style="${this.hasIcon ? '' : 'display: none'}"
+        >${this.icon}</span>
       </a>
     `;
-    this.linkElement = this.querySelector('a.v-link');
-    this.labelElement = this.querySelector('.v-link > .v-link__label');
-    this.iconElement = this.querySelector('.v-link > .material-icons');
-    this.labelElement.append(...childNodes);
-  }
-
-  connectedCallback() {
-    if (this.mutationObserver) return;
-    
-    this.render([...this.childNodes]);
-
-    this.mutationObserver = new MutationObserver((list, observer) => {
-      if (list.some(item => item.target === this)) {
-        observer.disconnect();
-        this.render([...list[0].addedNodes]);
-        observer.observe(this, { childList: true, subtree: false });
-      }
-    });
-    this.mutationObserver.observe(this, { childList: true, subtree: false });
-  }
-
-  disconnectedCallback() {
-    if (this.mutationObserver) {
-        this.mutationObserver.disconnect();
-        this.mutationObserver = null;
-    }
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) return;
-
-    if (name === 'size') {
-        this.size = newValue;
-    } else if (name === 'has-icon') {
-        this.hasIcon = newValue === 'true' || newValue === '';
-    } else if (name === 'href') {
-        this.href = newValue;
-    } else if (name === 'icon') {
-        this.icon = newValue;
-    } else if (name === 'icon-aria-label') {
-        this.iconAriaLabel = newValue;
-    } else if (name === 'target') {
-        this.target = newValue;
-    }
-
-    if (!this.linkElement) return;
-
-    if (name === 'size' || name === 'has-icon' || name === 'href' || name === 'target') {
-        this.linkElement.className = `v-link v-link--${this.size}${this.hasIcon ? ' v-link--with-icon' : ''}`;
-        if (name === 'href') {
-            this.linkElement.setAttribute('href', this.href);
-        }
-        if (name === 'target') {
-            if (this.target) {
-                this.linkElement.setAttribute('target', this.target);
-            } else {
-                this.linkElement.removeAttribute('target');
-            }
-        }
-        if (name === 'has-icon') {
-            this.iconElement.style.display = this.hasIcon ? '' : 'none';
-        }
-    } else if (name === 'icon') {
-        this.iconElement.textContent = this.icon;
-    } else if (name === 'icon-aria-label') {
-        this.iconElement.setAttribute('aria-label', this.iconAriaLabel);
-    }
   }
 }
 
